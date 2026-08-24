@@ -1,0 +1,53 @@
+# Example benchmark configuration.
+#
+# Copy this file, point `datasets` at your own CSV/JSON/Parquet files, and
+# choose which model providers to compare. Any number of datasets, providers,
+# and shot counts can be listed — the runner sweeps the full cartesian product.
+#
+# Set the relevant API key as an environment variable before running:
+#   export OPENAI_API_KEY=...
+#   export ANTHROPIC_API_KEY=...
+#   export GOOGLE_API_KEY=...
+
+labels: [positive, neutral, negative]
+shot_counts: [0, 3, 6, 9]
+document_noun: review          # word used in the prompt, e.g. "comment", "post", "review"
+output_dir: results
+example_seed: 42
+length_unit: chars
+
+datasets:
+  - name: product_reviews
+    path: data/sample/product_reviews.csv
+    text_column: text
+    label_column: label
+
+  - name: restaurant_feedback
+    path: data/sample/restaurant_feedback.csv
+    text_column: text
+    label_column: label
+
+providers:
+  - name: openai
+    model: gpt-4o
+    api_key_env: OPENAI_API_KEY
+    temperature: 0.0
+    max_tokens: 10
+    request_interval: 0.0
+    max_retries: 3
+
+  - name: anthropic
+    model: claude-sonnet-5
+    api_key_env: ANTHROPIC_API_KEY
+    temperature: 0.0
+    max_tokens: 10
+    request_interval: 0.0
+    max_retries: 3
+
+  - name: gemini
+    model: gemini-1.5-pro
+    api_key_env: GOOGLE_API_KEY
+    temperature: 0.0
+    max_tokens: 10
+    request_interval: 0.0
+    max_retries: 3

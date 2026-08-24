@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "icl-sentiment"
+version = "1.0.0"
+description = "In-context learning benchmark framework for long-context sentiment analysis with LLMs (zero-shot and few-shot)"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [{ name = "Alireza Shamshiri", email = "shamshiri.alirezall@gmail.com" }]
+keywords = ["sentiment-analysis", "in-context-learning", "llm", "few-shot", "benchmark"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "pandas>=1.5",
+    "numpy>=1.23",
+    "scikit-learn>=1.2",
+    "PyYAML>=6.0",
+    "tqdm>=4.65",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.0"]
+anthropic = ["anthropic>=0.25"]
+gemini = ["google-generativeai>=0.5"]
+all = ["openai>=1.0", "anthropic>=0.25", "google-generativeai>=0.5"]
+plot = ["matplotlib>=3.7", "seaborn>=0.12"]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+
+[project.scripts]
+icl-sentiment = "icl_sentiment.cli:main"
+
+[project.urls]
+Paper = "https://doi.org/10.48550/arXiv.2410.11265"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+target-version = "py39"
+
+[tool.ruff.lint]
+extend-select = ["UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
