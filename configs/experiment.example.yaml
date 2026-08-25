@@ -17,13 +17,13 @@ example_seed: 42
 length_unit: chars
 
 datasets:
-  - name: product_reviews
-    path: data/sample/product_reviews.csv
+  - name: news
+    path: data/sample/News.csv
     text_column: text
     label_column: label
 
-  - name: restaurant_feedback
-    path: data/sample/restaurant_feedback.csv
+  - name: facebook
+    path: data/sample/facebook.csv
     text_column: text
     label_column: label
 

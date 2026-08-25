@@ -58,7 +58,7 @@ Copy `.env.example` to `.env` and fill in the API key(s) for the providers you p
 
 ## Quickstart
 
-Two small, generic sample datasets ship in `data/sample/` (product reviews, restaurant feedback)
+Two small, generic sample datasets ship in `data/sample/` (news articles, Facebook comments)
 so you can try the whole pipeline immediately.
 
 ### CLI
@@ -88,7 +88,7 @@ from icl_sentiment import (
 
 config = ExperimentConfig(
     datasets=[
-        DatasetConfig(name="reviews", path="data/sample/product_reviews.csv"),
+        DatasetConfig(name="news", path="data/sample/News.csv"),
     ],
     providers=[
         ProviderConfig(name="openai", model="gpt-4o", api_key_env="OPENAI_API_KEY"),
