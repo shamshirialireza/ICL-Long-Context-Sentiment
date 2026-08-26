@@ -1,10 +1,10 @@
-# Example benchmark configuration.
-#
+# Benchmark configuration.
+
 # Copy this file, point `datasets` at your own CSV/JSON/Parquet files, and
 # choose which model providers to compare. Any number of datasets, providers,
-# and shot counts can be listed — the runner sweeps the full cartesian product.
-#
-# Set the relevant API key as an environment variable before running:
+# and shot counts can be listed, the runner sweeps the full cartesian product.
+
+# Set API key as an environment variable for each model before running:
 #   export OPENAI_API_KEY=...
 #   export ANTHROPIC_API_KEY=...
 #   export GOOGLE_API_KEY=...
