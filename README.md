@@ -1,8 +1,8 @@
-# icl-long-context-sentiment
-_____
+# In Context Learning for Long-Context Sentiment Classification using LLMs
+
 A dynamic framework for benchmarking **in-context learning (zero-shot and
 few-shot) for long context sentiment classification** across multiple LLM providers and multiple datasets.
-_____
+
 ## Features
 
 - **Provider-agnostic**: OpenAI, Anthropic, and Google Gemini ship out of the box; add a new
