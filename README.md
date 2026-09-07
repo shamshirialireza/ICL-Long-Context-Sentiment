@@ -85,7 +85,7 @@ datasets = DatasetLoader().load_all(config.datasets)
 print(describe_datasets(datasets))    # No. / Mean / SD / Min. / 25th / Median / 75th / Max.
 ```
 
-### Google Colab
+### Google Colab Setup
 
 The benchmark runs fine on Colab's free CPU runtime — all model inference happens on the
 providers' APIs, so no GPU is needed. Shell commands work in notebook cells with a `!` prefix:
@@ -98,8 +98,8 @@ import os
 os.chdir('ICL-Long-Context-Sentiment')
 !pip install -e ".[all,dev]"   # or [openai], [anthropic], [gemini] individually
 
-# Cell 2 — API keys via Colab Secrets (the 🔑 icon in the left sidebar).
-# Never paste keys directly into cells: notebooks get saved and shared.
+# Cell 2 — Insert API keys and values via Colab Secrets FIRST (the 🔑 icon in the left sidebar).
+# Don't paste keys directly into cells if you share the colab notebook.
 
 from google.colab import userdata
 os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
