@@ -42,13 +42,13 @@ so you can try the whole pipeline immediately.
 
 ```bash
 # Descriptive statistics for every configured dataset
-icl-sentiment stats configs/experiment.example.yaml
+ICL-Long-Context-Sentiment stats configs/experiment.example.yaml
 
 # Run the full benchmark matrix (datasets x providers x shot counts)
-icl-sentiment run configs/experiment.example.yaml
+ICL-Long-Context-Sentiment run configs/experiment.example.yaml
 
 # List available model providers
-icl-sentiment providers
+ICL-Long-Context-Sentiment providers
 ```
 
 `run` writes per-row predictions to `results/checkpoints/` (so it is safe to Ctrl-C and resume)
@@ -95,25 +95,19 @@ import os
 !git clone https://github.com/shamshirialireza/ICL-Long-Context-Sentiment.git
 os.chdir('ICL-Long-Context-Sentiment')
 !pip install -e ".[all,dev]"   # or [openai], [anthropic], [gemini] individually
-```
 
-After the install finishes, restart the Colab runtime (Runtime → Restart session) so the kernel
-picks up the newly installed package, then continue with the cells below.
-
-```python
 # Cell 2 — Insert API keys and values via Colab Secrets FIRST (the 🔑 icon in the left sidebar).
 # Don't paste keys directly into cells if you share the colab notebook.
 
-import os
 from google.colab import userdata
 os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
 os.environ["ANTHROPIC_API_KEY"] = userdata.get("ANTHROPIC_API_KEY")
 os.environ["GOOGLE_API_KEY"] = userdata.get("GOOGLE_API_KEY")
 
 # Cell 3 — same CLI as local usage
-!icl-sentiment providers
-!icl-sentiment stats configs/experiment.example.yaml
-!icl-sentiment run configs/experiment.example.yaml
+!ICL-Long-Context-Sentiment providers
+!ICL-Long-Context-Sentiment stats configs/experiment.example.yaml
+!ICL-Long-Context-Sentiment run configs/experiment.example.yaml
 ```
 
 Colab VMs are ephemeral: `results/` is wiped when the runtime disconnects, so download what you
@@ -188,7 +182,7 @@ icl_sentiment/
 │   └── statistics.py         describe_dataset / describe_datasets (length statistics)
 ├── runner.py                 ExperimentConfig, ExperimentRunner — checkpointed orchestration
 ├── reports.py                 model_dataset_table, summarize — result reshaping
-└── cli.py                     `icl-sentiment run|stats|providers`
+└── cli.py                     `ICL-Long-Context-Sentiment run|stats|providers`
 ```
 
 ## Testing
