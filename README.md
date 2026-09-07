@@ -1,4 +1,4 @@
-# In Context Learning for Long-Context Sentiment Classification using LLMs
+# In Context Learning for Long-Context Sentiment Classification
 
 A dynamic framework for benchmarking **in-context learning (zero-shot and
 few-shot) for long context sentiment classification** across multiple LLM providers and multiple datasets.
