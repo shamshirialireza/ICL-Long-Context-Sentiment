@@ -92,13 +92,15 @@ providers' APIs, so no GPU is needed. Shell commands work in notebook cells with
 
 ```python
 # Cell 1 — get the code and install it
+import os
+
 !git clone https://github.com/shamshirialireza/ICL-Long-Context-Sentiment.git
-%cd ICL-Long-Context-Sentiment
-!pip install -q -e ".[all]"
+os.chdir('ICL-Long-Context-Sentiment')
+!pip install -e ".[all,dev]"   # or [openai], [anthropic], [gemini] individually
 
 # Cell 2 — API keys via Colab Secrets (the 🔑 icon in the left sidebar).
 # Never paste keys directly into cells: notebooks get saved and shared.
-import os
+
 from google.colab import userdata
 os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
 os.environ["ANTHROPIC_API_KEY"] = userdata.get("ANTHROPIC_API_KEY")
