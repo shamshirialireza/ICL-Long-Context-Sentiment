@@ -1,9 +1,7 @@
 """Command-line interface.
-
     icl-sentiment run config.yaml --output results/
     icl-sentiment stats config.yaml
-    icl-sentiment providers
-"""
+    icl-sentiment providers"""
 
 from __future__ import annotations
 
@@ -80,10 +78,16 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+DEFAULT_CONFIG = Path(__file__).resolve().parents[2] / "configs" / "experiment.example.yaml"
+
+
 def main(argv=None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     parser = build_parser()
-    args = parser.parse_args(argv if argv is not None else sys.argv[1:])
+    argv = argv if argv is not None else sys.argv[1:]
+    if not argv:
+        argv = ["run", str(DEFAULT_CONFIG)]
+    args = parser.parse_args(argv)
     args.func(args)
 
 

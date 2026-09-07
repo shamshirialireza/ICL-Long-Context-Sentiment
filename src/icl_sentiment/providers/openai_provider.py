@@ -19,11 +19,15 @@ class OpenAIProvider(SentimentProvider):
             ) from error
         self._client = OpenAI(api_key=config.resolve_api_key())
 
-    def _complete(self, prompt: str) -> str:
+    def _complete(self, prompt: str, system_instruction: str | None = None) -> str:
+        messages = []
+        if system_instruction:
+            messages.append({"role": "system", "content": system_instruction})
+        messages.append({"role": "user", "content": prompt})
         response = self._client.chat.completions.create(
             model=self.config.model,
             temperature=self.config.temperature,
             max_tokens=self.config.max_tokens,
-            messages=[{"role": "user", "content": prompt}],
+            messages=messages,
         )
         return response.choices[0].message.content or ""

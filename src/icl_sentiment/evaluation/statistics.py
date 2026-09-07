@@ -1,8 +1,4 @@
-"""Descriptive statistics for datasets.
-
-Produces the paper-style table: No., Mean, SD, Min., 25th Pctl., Median,
-75th Pctl., Max. of document lengths (characters by default, words optionally).
-"""
+#Descriptive statistics for datasets.
 
 from __future__ import annotations
 

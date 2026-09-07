@@ -1,31 +1,8 @@
-# icl-sentiment
-
-A dynamic, object-oriented framework for benchmarking **in-context learning (zero-shot and
-few-shot) sentiment classification** across multiple LLM providers and multiple datasets.
-
-It reimplements the methodology from
-[*In-Context Learning for Long-Context Sentiment Analysis on Infrastructure Project Opinions*](https://doi.org/10.48550/arXiv.2410.11265)
-as a reusable, general-purpose tool: any text/label CSV works, not just infrastructure or
-transportation data, and there is nothing dataset-specific hardcoded anywhere in the codebase.
-
-## Why this exists
-
-The original research code was a single 566-cell notebook: hardcoded Google Drive paths,
-hardcoded API keys, hardcoded few-shot example text pasted separately into every
-dataset/shot/model combination, and hand-rolled TP/FP counting copy-pasted dozens of times.
-This project restructures that pipeline into small, testable, swappable components:
-
-| Concern | Notebook (before) | This repo (after) |
-|---|---|---|
-| Datasets | Hardcoded `pd.read_csv('/content/drive/...')` per cell | `DatasetLoader` + `DatasetConfig`, any CSV/JSON/Parquet |
-| Models | Copy-pasted API calls per dataset/shot | `SentimentProvider` classes registered in a `ProviderRegistry` |
-| Few-shot examples | Hand-picked strings duplicated ~40 times | `ExampleSelector` samples class-balanced examples dynamically |
-| Prompts | Hardcoded per-dataset prompt strings | `PromptBuilder`, domain-neutral and configurable |
-| Metrics | Manual TP/FP/FN counters | `sklearn`-backed accuracy, macro-F1, micro-F1, per-class report |
-| Dataset stats | Hardcoded numbers pasted into a plotting cell | Computed dynamically from the actual data |
-| Secrets | API keys committed in plaintext | Read from environment variables |
-| Execution | Sequential `while` loop, no resume | Checkpointed per row, resumable, retry with backoff |
-
+# icl-long-context-sentiment
+_____
+A dynamic framework for benchmarking **in-context learning (zero-shot and
+few-shot) for long context sentiment classification** across multiple LLM providers and multiple datasets.
+_____
 ## Features
 
 - **Provider-agnostic**: OpenAI, Anthropic, and Google Gemini ship out of the box; add a new
@@ -48,7 +25,7 @@ This project restructures that pipeline into small, testable, swappable componen
 ## Installation
 
 ```bash
-git clone <this-repo-url>
+git clone https://github.com/shamshirialireza/icl-sentiment.git
 cd icl-sentiment
 pip install -e ".[all,dev]"   # or [openai], [anthropic], [gemini] individually
 ```
@@ -92,7 +69,10 @@ config = ExperimentConfig(
     ],
     providers=[
         ProviderConfig(name="openai", model="gpt-4o", api_key_env="OPENAI_API_KEY"),
-        ProviderConfig(name="anthropic", model="claude-sonnet-5", api_key_env="ANTHROPIC_API_KEY"),
+        # Thinking tokens count toward max_tokens on current Claude/Gemini
+        # models, so give them headroom beyond the one-word label.
+        ProviderConfig(name="anthropic", model="claude-sonnet-5", api_key_env="ANTHROPIC_API_KEY", max_tokens=200),
+        ProviderConfig(name="gemini", model="gemini-3.6-flash", api_key_env="GOOGLE_API_KEY", max_tokens=500),
     ],
     shot_counts=[0, 3, 6, 9],
     document_noun="review",
@@ -104,6 +84,42 @@ print(model_dataset_table(results))   # accuracy + macro-F1 per model per datase
 datasets = DatasetLoader().load_all(config.datasets)
 print(describe_datasets(datasets))    # No. / Mean / SD / Min. / 25th / Median / 75th / Max.
 ```
+
+### Google Colab
+
+The benchmark runs fine on Colab's free CPU runtime — all model inference happens on the
+providers' APIs, so no GPU is needed. Shell commands work in notebook cells with a `!` prefix:
+
+```python
+# Cell 1 — get the code and install it
+!git clone https://github.com/shamshirialireza/icl-sentiment.git
+%cd icl-sentiment
+!pip install -q -e ".[all]"
+
+# Cell 2 — API keys via Colab Secrets (the 🔑 icon in the left sidebar).
+# Never paste keys directly into cells: notebooks get saved and shared.
+import os
+from google.colab import userdata
+os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
+os.environ["ANTHROPIC_API_KEY"] = userdata.get("ANTHROPIC_API_KEY")
+os.environ["GOOGLE_API_KEY"] = userdata.get("GOOGLE_API_KEY")
+
+# Cell 3 — same CLI as local usage
+!icl-sentiment providers
+!icl-sentiment stats configs/experiment.example.yaml
+!icl-sentiment run configs/experiment.example.yaml
+```
+
+Colab VMs are ephemeral: `results/` is wiped when the runtime disconnects, so download what you
+need (or write `output_dir` to a mounted Google Drive):
+
+```python
+from google.colab import files
+files.download("results/results.csv")
+```
+
+The [Python API](#python-api) works in cells too, and is often nicer in a notebook — the report
+tables are pandas DataFrames, so they render as proper tables instead of printed text.
 
 ## Bring your own dataset
 
@@ -174,10 +190,6 @@ icl_sentiment/
 ```bash
 pytest -v
 ```
-
-Tests run fully offline using a deterministic `FakeProvider` (registered in `tests/conftest.py`),
-so the whole pipeline — data loading, example selection, prompt building, checkpointing, metrics,
-and the CLI — is exercised in CI without needing any API keys.
 
 ## Citation
 

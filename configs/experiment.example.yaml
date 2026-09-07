@@ -31,7 +31,7 @@ providers:
   - name: openai
     model: gpt-4o
     api_key_env: OPENAI_API_KEY
-    temperature: 0.0
+    temperature: 0
     max_tokens: 10
     request_interval: 0.0
     max_retries: 3
@@ -39,15 +39,17 @@ providers:
   - name: anthropic
     model: claude-sonnet-5
     api_key_env: ANTHROPIC_API_KEY
-    temperature: 0.0
-    max_tokens: 10
+    # temperature is not supported by current Claude models and is ignored.
+    # Thinking tokens count toward max_tokens on claude-sonnet-5, so leave headroom.
+    max_tokens: 200
     request_interval: 0.0
     max_retries: 3
 
   - name: gemini
-    model: gemini-1.5-pro
+    model: gemini-3.6-flash
     api_key_env: GOOGLE_API_KEY
-    temperature: 0.0
-    max_tokens: 10
+    temperature: 0
+    # Gemini 2.5 thinking tokens count toward max_output_tokens, so leave headroom.
+    max_tokens: 500
     request_interval: 0.0
     max_retries: 3

@@ -3,8 +3,7 @@
 Runs the full matrix of datasets x models x shot-counts, replacing the ~500
 duplicated notebook cells with a single configurable loop. Supports resuming
 from partial results (per-row checkpointing) so a rate limit or crash never
-loses completed work.
-"""
+loses completed work."""
 
 from __future__ import annotations
 
@@ -36,6 +35,8 @@ class ExperimentConfig:
         labels: Canonical sentiment labels, also used to stratify few-shot examples.
         document_noun: Word used in prompts to describe one row of text
             (e.g. "comment", "review", "post"). Domain-neutral by default.
+        system_instruction: System prompt sent to every provider; None uses
+            the :class:`PromptBuilder` default.
         output_dir: Where per-run predictions and aggregate reports are written.
         example_seed: Seed for few-shot example sampling (reproducibility).
         length_unit: "chars" or "words" for the dataset descriptive-statistics table.
@@ -46,6 +47,7 @@ class ExperimentConfig:
     shot_counts: list[int] = field(default_factory=lambda: [0, 3, 6, 9])
     labels: list[str] = field(default_factory=lambda: ["positive", "neutral", "negative"])
     document_noun: str = "text"
+    system_instruction: str | None = None
     output_dir: str = "results"
     example_seed: int = 42
     length_unit: str = "chars"
@@ -57,13 +59,33 @@ class ExperimentConfig:
         with open(path, encoding="utf-8") as handle:
             raw = yaml.safe_load(handle)
 
-        datasets = [DatasetConfig(**item) for item in raw.get("datasets", [])]
+        # Relative paths in the YAML are resolved against the config file's
+        # directory (falling back to its parent, for configs kept in a
+        # subdirectory like configs/), so the CLI works from any working directory.
+        config_dir = Path(path).resolve().parent
+
+        def _resolve(relative: str) -> str:
+            candidate = Path(relative)
+            if candidate.is_absolute():
+                return relative
+            for base in (config_dir, config_dir.parent):
+                if (base / candidate).exists():
+                    return str(base / candidate)
+            return str(config_dir.parent / candidate)
+
+        datasets = []
+        for item in raw.get("datasets", []):
+            dataset = DatasetConfig(**item)
+            dataset.path = _resolve(dataset.path)
+            datasets.append(dataset)
         providers = [ProviderConfig(**item) for item in raw.get("providers", [])]
         kwargs = {
             key: value
             for key, value in raw.items()
             if key not in {"datasets", "providers"}
         }
+        if "output_dir" in kwargs and not Path(kwargs["output_dir"]).is_absolute():
+            kwargs["output_dir"] = str(config_dir.parent / kwargs["output_dir"])
         return cls(datasets=datasets, providers=providers, **kwargs)
 
 
@@ -128,7 +150,11 @@ class ExperimentRunner:
 
         examples = self.example_selector.select(dataset, n_shots)
         excluded_texts = ExampleSelector.example_texts(examples)
-        builder = PromptBuilder(labels=tuple(self.config.labels), document_noun=self.config.document_noun)
+        builder = PromptBuilder(
+            labels=tuple(self.config.labels),
+            document_noun=self.config.document_noun,
+            system_instruction=self.config.system_instruction,
+        )
 
         texts = dataset.texts
         gold_labels = dataset.labels
@@ -145,7 +171,7 @@ class ExperimentRunner:
         for index in iterator:
             prompt = builder.build(texts[index], examples)
             try:
-                raw_response = provider.classify(prompt)
+                raw_response = provider.classify(prompt, builder.system_instruction)
             except Exception as error:  # noqa: BLE001
                 logger.error("Giving up on row %d for %s: %s", index, provider.label, error)
                 raw_response = ""

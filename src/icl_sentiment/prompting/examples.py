@@ -1,10 +1,4 @@
-"""Few-shot example selection.
-
-The original notebook hardcoded example strings for each dataset and shot count.
-This module selects examples dynamically from the dataset itself, stratified
-across classes so a 3-shot prompt gets one example per sentiment class, 6-shot
-gets two, and so on.
-"""
+#Few-shot example selection.
 
 from __future__ import annotations
 

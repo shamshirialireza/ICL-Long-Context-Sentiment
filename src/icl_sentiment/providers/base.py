@@ -59,15 +59,15 @@ class SentimentProvider(abc.ABC):
         self.config = config
 
     @abc.abstractmethod
-    def _complete(self, prompt: str) -> str:
+    def _complete(self, prompt: str, system_instruction: str | None = None) -> str:
         """Send one prompt to the backend and return the raw text response."""
 
-    def classify(self, prompt: str) -> str:
+    def classify(self, prompt: str, system_instruction: str | None = None) -> str:
         """Classify with retries and exponential backoff; returns raw model output."""
         last_error: Exception | None = None
         for attempt in range(self.config.max_retries + 1):
             try:
-                response = self._complete(prompt)
+                response = self._complete(prompt, system_instruction)
                 if self.config.request_interval:
                     time.sleep(self.config.request_interval)
                 return response

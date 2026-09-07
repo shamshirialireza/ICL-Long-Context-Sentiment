@@ -1,8 +1,4 @@
-"""Classification metrics.
-
-Replaces the hand-rolled TP/FP counting from the notebook with sklearn metrics.
-Primary metrics for the paper tables: accuracy and macro-F1.
-"""
+#Metric calculations
 
 from __future__ import annotations
 

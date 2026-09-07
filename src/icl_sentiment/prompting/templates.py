@@ -1,8 +1,7 @@
-"""Prompt construction for zero-shot and few-shot sentiment classification.
+#Prompt construction for zero-shot and few-shot sentiment classification
 
-Domain-neutral: the document noun ("comment", "review", "post", ...) and the
-label set are configurable instead of being baked into the prompt text.
-"""
+"""Domain-neutral: the document noun ("comment", "review", "post", ...) and the
+label set are configurable instead of being baked into the prompt text."""
 
 from __future__ import annotations
 
@@ -11,7 +10,6 @@ from collections.abc import Sequence
 from icl_sentiment.prompting.examples import FewShotExample
 
 DEFAULT_LABELS = ("positive", "neutral", "negative")
-
 
 class PromptBuilder:
     """Builds classification prompts from a document, labels, and optional examples."""
