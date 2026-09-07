@@ -42,13 +42,13 @@ so you can try the whole pipeline immediately.
 
 ```bash
 # Descriptive statistics for every configured dataset
-ICL-Long-Context-Sentiment stats configs/experiment.example.yaml
+icl-sentiment stats configs/experiment.example.yaml
 
 # Run the full benchmark matrix (datasets x providers x shot counts)
-ICL-Long-Context-Sentiment run configs/experiment.example.yaml
+icl-sentiment run configs/experiment.example.yaml
 
 # List available model providers
-ICL-Long-Context-Sentiment providers
+icl-sentiment providers
 ```
 
 `run` writes per-row predictions to `results/checkpoints/` (so it is safe to Ctrl-C and resume)
@@ -105,9 +105,9 @@ os.environ["ANTHROPIC_API_KEY"] = userdata.get("ANTHROPIC_API_KEY")
 os.environ["GOOGLE_API_KEY"] = userdata.get("GOOGLE_API_KEY")
 
 # Cell 3 — same CLI as local usage
-!ICL-Long-Context-Sentiment providers
-!ICL-Long-Context-Sentiment stats configs/experiment.example.yaml
-!ICL-Long-Context-Sentiment run configs/experiment.example.yaml
+!icl-sentiment providers
+!icl-sentiment stats configs/experiment.example.yaml
+!icl-sentiment run configs/experiment.example.yaml
 ```
 
 Colab VMs are ephemeral: `results/` is wiped when the runtime disconnects, so download what you
@@ -182,7 +182,7 @@ icl_sentiment/
 │   └── statistics.py         describe_dataset / describe_datasets (length statistics)
 ├── runner.py                 ExperimentConfig, ExperimentRunner — checkpointed orchestration
 ├── reports.py                 model_dataset_table, summarize — result reshaping
-└── cli.py                     `ICL-Long-Context-Sentiment run|stats|providers`
+└── cli.py                     `icl-sentiment run|stats|providers`
 ```
 
 ## Testing
