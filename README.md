@@ -25,11 +25,9 @@ few-shot) for long context sentiment classification** across multiple LLM provid
 ## Installation
 
 ```bash
-import os
-
-!git clone https://github.com/shamshirialireza/ICL-Long-Context-Sentiment.git
-os.chdir('ICL-Long-Context-Sentiment')
-!pip install -e ".[all,dev]"   # or [openai], [anthropic], [gemini] individually
+git clone https://github.com/shamshirialireza/icl-sentiment.git
+cd icl-sentiment
+pip install -e ".[all,dev]"   # or [openai], [anthropic], [gemini] individually
 ```
 
 Copy `.env.example` to `.env` and fill in the API key(s) for the providers you plan to use, then
