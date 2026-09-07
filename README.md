@@ -1,8 +1,8 @@
-# icl-long-context-sentiment
-_____
+# In Context Learning for Long-Context Sentiment Classification
+
 A dynamic framework for benchmarking **in-context learning (zero-shot and
 few-shot) for long context sentiment classification** across multiple LLM providers and multiple datasets.
-_____
+
 ## Features
 
 - **Provider-agnostic**: OpenAI, Anthropic, and Google Gemini ship out of the box; add a new
@@ -25,8 +25,8 @@ _____
 ## Installation
 
 ```bash
-git clone https://github.com/shamshirialireza/icl-sentiment.git
-cd icl-sentiment
+git clone https://github.com/shamshirialireza/ICL-Long-Context-Sentiment.git
+cd ICL-Long-Context-Sentiment
 pip install -e ".[all,dev]"   # or [openai], [anthropic], [gemini] individually
 ```
 
@@ -69,8 +69,6 @@ config = ExperimentConfig(
     ],
     providers=[
         ProviderConfig(name="openai", model="gpt-4o", api_key_env="OPENAI_API_KEY"),
-        # Thinking tokens count toward max_tokens on current Claude/Gemini
-        # models, so give them headroom beyond the one-word label.
         ProviderConfig(name="anthropic", model="claude-sonnet-5", api_key_env="ANTHROPIC_API_KEY", max_tokens=200),
         ProviderConfig(name="gemini", model="gemini-3.6-flash", api_key_env="GOOGLE_API_KEY", max_tokens=500),
     ],
@@ -85,19 +83,27 @@ datasets = DatasetLoader().load_all(config.datasets)
 print(describe_datasets(datasets))    # No. / Mean / SD / Min. / 25th / Median / 75th / Max.
 ```
 
-### Google Colab
+### Google Colab Setup
 
 The benchmark runs fine on Colab's free CPU runtime — all model inference happens on the
 providers' APIs, so no GPU is needed. Shell commands work in notebook cells with a `!` prefix:
 
 ```python
 # Cell 1 — get the code and install it
-!git clone https://github.com/shamshirialireza/icl-sentiment.git
-%cd icl-sentiment
-!pip install -q -e ".[all]"
+import os
 
-# Cell 2 — API keys via Colab Secrets (the 🔑 icon in the left sidebar).
-# Never paste keys directly into cells: notebooks get saved and shared.
+!git clone https://github.com/shamshirialireza/ICL-Long-Context-Sentiment.git
+os.chdir('ICL-Long-Context-Sentiment')
+!pip install -e ".[all,dev]"   # or [openai], [anthropic], [gemini] individually
+```
+
+After the install finishes, restart the Colab runtime (Runtime → Restart session) so the kernel
+picks up the newly installed package, then continue with the cells below.
+
+```python
+# Cell 2 — Insert API keys and values via Colab Secrets FIRST (the 🔑 icon in the left sidebar).
+# Don't paste keys directly into cells if you share the colab notebook.
+
 import os
 from google.colab import userdata
 os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
