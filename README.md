@@ -69,8 +69,6 @@ config = ExperimentConfig(
     ],
     providers=[
         ProviderConfig(name="openai", model="gpt-4o", api_key_env="OPENAI_API_KEY"),
-        # Thinking tokens count toward max_tokens on current Claude/Gemini
-        # models, so give them headroom beyond the one-word label.
         ProviderConfig(name="anthropic", model="claude-sonnet-5", api_key_env="ANTHROPIC_API_KEY", max_tokens=200),
         ProviderConfig(name="gemini", model="gemini-3.6-flash", api_key_env="GOOGLE_API_KEY", max_tokens=500),
     ],
